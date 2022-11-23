@@ -10,11 +10,11 @@ export default{
         return axios.post('/regist',data)
     },
     viplogin(data){
-        return axios.post('/login',data)
+        return axios.post('/viplogin',data)
     },
 
     vipregist(data){
-        return axios.post('/regist',data)
+        return axios.post('/vipregist',data)
     },
     getUserInfo(){
         return axios.get('/userinfo')
@@ -22,17 +22,17 @@ export default{
     updUserInfo(data){
         return axios.post('/userinfo/upd',data)
     },
-    delUserInfo(date){
-        return axios.post('/userinfo/del',date)
+    delUserInfo(data){
+        return axios.post('/userinfo/del',data)
     },
     getVipUserInfo(){
         return axios.get('/vipuserinfo')
     },
-    vipupdUserInfo(date){
-        return axios.post('/vipuserinfo/upd',date)
+    vipupdUserInfo(data){
+        return axios.post('/vipuserinfo/upd',data)
     },
-    vipdelUserInfo(date){
-        return axios.post('/vipuserinfo/del',date)
+    vipdelUserInfo(data){
+        return axios.post('/vipuserinfo/del',data)
     },
 }
 

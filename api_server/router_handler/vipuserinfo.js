@@ -25,10 +25,11 @@ exports.getUserInfo = (req, res) => {
 }
 
 exports.deleteUserInfo = (req,res)=>{
-    const sqlDel = 'DELETE FROM vip WHERE username=?'
-    if(req.body.username === 'admin') return res.send(one(1,'最高管理员用户不可删除'))
+    console.log(req.body);
+    const sqlDel = 'DELETE FROM vip WHERE id=?'
+    if(req.body.id === 'admin') return res.send(one(1,'最高管理员用户不可删除'))
     
-    const delName = req.body.username
+    const delName = req.body.id
     db.query(sqlDel,delName,(err,results)=>{
         // console.log(results);
         if(err) return res.send(one(1,err.message))
@@ -42,17 +43,16 @@ exports.deleteUserInfo = (req,res)=>{
     )
     // res.send('de ok')
 }
-let oldPassword = 0
 
 exports.updateUserInfo = (req,res)=>{
-    const sqlUpd = 'update vip set ? where username=?'
+    const sqlUpd = 'update vip set ? where id=?'
     const userinfo = req.body
 
 
     //将传入的密码进行加密
     userinfo.password = bcryptjs.hashSync(userinfo.password,10)
     
-    db.query(sqlUpd,[userinfo,req.body.username],(err,results)=>{
+    db.query(sqlUpd,[userinfo,req.body.id],(err,results)=>{
         if(err) return res.send(one(1,err.message)) 
 
         if(userinfo.username === 'admin') return res.send(one(1,'最高管理员用户不可修改'))

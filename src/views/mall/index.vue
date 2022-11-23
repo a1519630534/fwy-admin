@@ -20,7 +20,7 @@
 
 
       <!-- 管理员列表 -->
-      <el-table v-show="isAdminLisr" :data="adminList" stripe style="width: 100%">
+      <el-table v-show="isAdminLisr" :data="adminList" stripe style="width: 100%" max-height="600">
          <el-table-column type="index" label="序号" width="150px">
          </el-table-column>
          <el-table-column prop="username" label="用户名">
@@ -36,7 +36,7 @@
       </el-table>
 
       <!-- VIP列表 -->
-      <el-table v-show="!isAdminLisr" :data="vipList" stripe style="width: 100%">
+      <el-table v-show="!isAdminLisr" :data="vipList" stripe style="width: 100%" max-height="600">
          <el-table-column type="index" label="序号" width="150px">
          </el-table-column>
          <el-table-column prop="username" label="用户名">
@@ -88,7 +88,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                <el-button @click="dialogFormVisibleVip = false">取 消</el-button>
-               <el-button type="primary" @click="submMit">确 定</el-button>
+               <el-button type="primary" @click="vipsubmMit">确 定</el-button>
             </div>
          </el-dialog>
 
@@ -182,6 +182,7 @@ export default {
             if (valid) {
                if (this.modeType === 0) {
                   //添加请求
+                  console.log(12321);
 
                   this.$API.user.regist(this.form).then(() => {
 
@@ -236,39 +237,45 @@ export default {
          });
       },
       //VIP请求
-      // submMit() {
-      //    this.$refs.form.validate((valid) => {
+      vipsubmMit() {
+         console.log(11);
+         this.$refs.form.validate((valid) => {
+            console.log(this.vipform);
+            if (valid) {
+               if (this.modeType === 0) {
+                  //添加请求
 
-      //       if (valid) {
-      //          if (this.modeType === 0) {
-      //             //添加请求
+                  this.$API.user.vipregist(this.vipform).then(() => {
 
-      //             addVip(this.form).then(() => {
+                     this.getList()
+                     this.dialogFormVisibleVip = false
+                  })
+                  //否则就修改请求
+               } else {
+                  this.$API.user.vipupdUserInfo(this.vipform).then(() => {
+                     this.dialogFormVisibleVip = false
+                     this.getList()
+                  })
+               }
+            }
 
-      //                this.getList()
-      //             })
-      //             //否则就修改请求
-      //          } else {
-      //             updVip(this.form).then(() => {
-      //                this.getList()
-      //             })
-      //          }
-      //       }
-
-      //    })
-      //    this.form = {
-      //       username: '',
-      //       password: '',
-      //       phone: ''
-      //    },
-      //       this.dialogFormVisible = false
-      // },
+         })
+         this.form = {
+            username: '',
+            password: '',
+            phone: ''
+         },
+            this.dialogFormVisible = false
+      },
       //VIP点击修改
       editVipUser(row) {
-         this.dialogFormVisible = true
+         this.dialogFormVisibleVip = true
          this.modeType = 1
-         this.form = JSON.parse(JSON.stringify(row))
+         // console.log(row);
+         this.vipform = JSON.parse(JSON.stringify(row))
 
+         console.log(row,'row');
+         console.log(this.vipform);
       },
       //点击删除
       remVipUser(row) {
@@ -278,7 +285,7 @@ export default {
             type: 'warning',
             center: true
          }).then(() => {
-            delVip({ id: row.id }).then((data) => {
+            this.$API.user.vipdelUserInfo({ id: row.id }).then((data) => {
                this.getList()
                this.$message({
                   type: 'success',

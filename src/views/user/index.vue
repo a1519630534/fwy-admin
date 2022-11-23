@@ -24,7 +24,7 @@
          </el-table-column>
          <el-table-column prop="phone" label="手机号">
          </el-table-column>
-         <el-table-column prop="book.name" label="书名">
+         <el-table-column prop="book" label="书名" width="280">
          </el-table-column>
          <el-table-column prop="ondata" label="租借日期">
          </el-table-column>
@@ -34,7 +34,7 @@
          </el-table-column>
 
 
-         <el-table-column label="操作">
+         <el-table-column prop="isB" label="操作">
             <template slot-scope="scope">
                <el-button type="primary" size="mini " icon="el-icon-edit" @click="editDate(scope.row)">修改</el-button>
                <el-button size="mini" icon="el-icon-delete" type="danger" @click="delDate(scope.row)">删除</el-button>
@@ -64,19 +64,22 @@
 
 
 
+               <el-form-item label="书名" prop="book">
+                  <el-input v-model="form.book" placeholder="书名"></el-input>
+               </el-form-item>
 
                <el-form-item label="手机号" prop="phone">
                   <el-input v-model="form.phone" placeholder="请输入11位手机号"></el-input>
                </el-form-item>
 
-               <el-form-item label="租借日期" prop="ondata">
+               <el-form-item label="租借日期" >
                   <el-date-picker value-format="yyyy-MM-dd" type="date" placeholder="选择日期" v-model="form.ondata"
                      style="width: 100%;">
                   </el-date-picker>
                </el-form-item>
 
 
-               <el-form-item label="预定归还日期" prop="backdata">
+               <el-form-item label="预定归还日期" >
                   <el-date-picker value-format="yyyy-MM-dd" type="date" placeholder="选择日期" v-model="form.backdata"
                      style="width: 100%;">
                   </el-date-picker>
@@ -100,8 +103,9 @@
       </div>
       <!-- 分页 -->
       <div>
-         <el-pagination layout="prev, pager, next" :total="total" @current-change="handelPage" tex>
+         <el-pagination layout="prev, pager, next" :total="total" @current-change="handelPage">
          </el-pagination>
+
       </div>
    </div>
 </template>
@@ -132,15 +136,18 @@ export default {
                { min: 18, max: 18, message: '请输入18位身份证', trigger: 'change' }
             ],
             phone: [
-               { required: true, message: '请输入地址', trigger: 'blur' },
+               { required: true, message: '请输入地址', trigger: 'change' },
                { min: 11, max: 11, message: '请输入11位手机号码', trigger: 'change' }
 
             ],
             sex: [
                { required: true, message: '请选择性别', trigger: 'change' },
             ],
-            birth: [
-               { required: true, message: '请选择日期', trigger: 'change' },
+            data: [
+               { required: true, message: '请选择日期', trigger: 'blur' },
+            ],
+            book: [
+               { required: true, message: '请输入书名', trigger: 'blur' },
             ],
          },
          operateFormLabel: [
@@ -185,7 +192,7 @@ export default {
          total: 0,
          pageDate: {
             page: 1,
-            limit: 10
+            limit: 20
          },
          serData: {
             name: ''
@@ -203,11 +210,11 @@ export default {
    methods: {
       //获取列表
       getList() {
-         this.$API.book.getlist().then(({ data }) => {
-            this.tableData = data.message
+         this.$API.book.getlist({ params: { ...this.pageDate } }).then(({ data }) => {
+            this.tableData = data.pageList
             this.total = data.count || 0
 
-            console.log(data);
+            // console.log(this.tableData);
          })
       },
       //清空form表单函数
@@ -228,25 +235,27 @@ export default {
          this.$refs.form.validate((valid) => {
             if (valid) {
                if (this.modelType === 0) {
-                  addUser(this.form).then(() => {
+                  this.$API.book.add(this.form).then(() => {
                      //发送请求成功重新获取列表
                      this.getList()
-
+                     this.dialogFormVisible = false
+                     this.clearform()
                   })
                   //否则就修改
                } else {
-                  updUser(this.form).then(() => {
+                  this.$API.book.upd(this.form).then(() => {
                      this.getList()
                      this.isback = 1
-
+                     this.dialogFormVisible = false
+                     this.clearform()
                   })
                }
 
             }
 
          })
-         this.clearform()
-         this.dialogFormVisible = false
+
+
       },
       //点击添加按钮
       addUs() {
@@ -261,12 +270,14 @@ export default {
       },
       delDate(row) {
 
+         console.log(row);
          this.$confirm('是否确认该用户已归还书籍？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
          }).then(() => {
-            delUser({ id: row.id }).then(() => {
+
+            this.$API.book.del({ id: row.id }).then(() => {
                this.$message({
                   type: 'success',
                   message: '删除成功!'
@@ -294,7 +305,14 @@ export default {
          this.getList()
       },
       onSubmit() {
-         this.getList()
+         console.log(this.serData.name);
+         if(this.serData.name){
+            this.$API.book.serlist({params:{...this.serData}}).then(({data})=>{
+            this.tableData = data.message
+            return
+         })
+         
+         } else this.getList()
       }
    },
 

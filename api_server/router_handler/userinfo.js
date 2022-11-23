@@ -25,7 +25,7 @@ exports.getUserInfo = (req, res) => {
 }
 
 exports.deleteUserInfo = (req,res)=>{
-    console.log(req.body);
+    // console.log(req.body);
     const sqlDel = 'DELETE FROM admin WHERE id=?'
     if(req.body.id === '9') return res.send(one(1,'最高管理员用户不可删除'))
     
@@ -53,7 +53,6 @@ exports.updateUserInfo = (req,res)=>{
 
     //将传入的密码进行加密
     userinfo.password = bcryptjs.hashSync(userinfo.password,10)
-    console.log(12);
     db.query(sqlUpd,[userinfo,req.body.username],(err,results)=>{
         if(err) return res.send(one(1,err.message)) 
 

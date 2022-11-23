@@ -1,22 +1,24 @@
 <template>
-    <div class=".divbody">
-        <el-card shadow="hover" :body-style="{ padding: '20px' }" style="width: 800px;height: 400px;">
-            <el-form :hide-required-asterisk="true" label-position="left" style="text-align: center;" :model="form"
-                ref="form" :rules="rules" :inline="true" size="normal">
-                <h3>登录</h3>
-                <el-form-item prop="username" label="用户名：" style="margin-top: 50px;margin-left: 5%;">
-                    <el-input v-model="form.username" placeholder="请输入用户名"></el-input>
-                </el-form-item>
-                <el-form-item prop="password" label="密码：" style="margin-top: 50px;margin-left: 10.5%;">
-                    <el-input type="password" v-model="form.password" placeholder="请输入密码"></el-input>
-                </el-form-item>
-
-            </el-form>
-            <el-button style="margin-left: 45%;margin-top: 20px;" type="primary" @click="submit">登录</el-button>
-        </el-card>
-
-
+<div>
+    <div class="box">
+        <form autocomplete="off">
+            <h2>{{isAdmin?'管理员登录':'用户登录'}}</h2>
+            <div class="inputBox">
+                <input type="text" v-model="form.username" required="required">
+                <span>用户名</span>
+                <i></i>
+            </div>
+            <div class="inputBox">
+                <input type="password" v-model="form.password" required="required">
+                <span>密码</span>
+                <i></i>
+            </div>
+            <input type="submit" value="登录" @click="submit">
+            <input type="submit" :value="isAdmin?'切换普通':'切换管理员'" @click="swUser" >
+            
+        </form>
     </div>
+</div>
 </template>
 
 <script>
@@ -33,64 +35,251 @@ export default {
                 password: 'admin'
 
             },
-            rules: {
-                username: [
-                    { required: true, message: '请输入用户名', trigger: 'blur' },
-                ],
-                password: [
-                    { required: true, message: '请输入密码', trigger: 'blur' },
-                ]
-            }
+            isAdmin:false
+            // rules: {
+            //     username: [
+            //         { required: true, message: '请输入用户名', trigger: 'blur' },
+            //     ],
+            //     password: [
+            //         { required: true, message: '请输入密码', trigger: 'blur' },
+            //     ]
+            // }
         };
     },
     methods: {
+        swUser(){
+            this.isAdmin = !this.isAdmin
+        },
         submit() {
-            console.log(this.$API);
+            if(this.isAdmin){
+                this.$API.user.login(this.form).then(({ data }) => {
+                if (data.code === 20000) {
+                    Cookie.set('token', data.data.token)
+                    // console.log(data);
 
-            //效验并登录
-            this.$refs.form.validate((valid) => {
-                if (valid) {
-                    this.$API.user.login(this.form).then(({ data }) => {
-                        if (data.code === 20000) {
-                            Cookie.set('token', data.data.token)
-                            // console.log(data);
+                    //登录成功设置路由
+                    this.$store.commit('setMenu', data.data.menu)
+                    //动态添加路由
+                    this.$store.commit('addMenu', this.$router)
 
-                            //登录成功设置路由
-                            this.$store.commit('setMenu',data.data.menu)
-                            //动态添加路由
-                            this.$store.commit('addMenu',this.$router)
+                    this.$router.push('/home')
+                    // console.log(data);
+                    this.$message({
+                        message: '登录成功',
+                        type: 'success'
+                    });
+                } else if (data.status === 1) {
+                    this.$message({
+                        message: '用户名或密码错误',
+                        type: 'error'
+                    });
+                }
+                else {
 
-                            this.$router.push('/home')
-                            // console.log(data);
-                            this.$message({
-                                message: '登录成功',
-                                type: 'success'
-                            });
-                        } else if(data.status === 1) {
-                            this.$message({
-                                message: '用户名或密码错误',
-                                type: 'error'
-                            });
-                        }
-                        else {
-                            
-                        }
-                    })
                 }
             })
+            }else {
+                console.log(11);
+                this.$API.user.viplogin(this.form).then(({ data }) => {
+                if (data.code === 20000) {
+                    Cookie.set('token', data.data.token)
+                    // console.log(data);
 
+                    //登录成功设置路由
+                    this.$store.commit('setMenu', data.data.menu)
+                    //动态添加路由
+                    this.$store.commit('addMenu', this.$router)
 
+                    this.$router.push('/home')
+                    // console.log(data);
+                    this.$message({
+                        message: '登录成功',
+                        type: 'success'
+                    });
+                } else if (data.status === 1) {
+                    this.$message({
+                        message: '用户名或密码错误',
+                        type: 'error'
+                    });
+                }
+                else {
+
+                }
+            })
+            }
 
         },
     },
+    beforeCreate() {
+        document.querySelector('body').setAttribute('style', 'background:#23242a')
+    },
+    beforeDestroy() {
+        document.querySelector('body').removeAttribute('style')
+    }
 }
 </script>
 
 <style lang="less" scoped>
-.el-card {
+/* 引入需要的字体 */
+@import url('./font.css');
 
-    background-color: rgb(248, 248, 248);
-    margin: 180px auto;
-    border-radius: 15px;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    flex-direction: column;
+    background: #23242a;
+}
+
+.box {
+
+    margin: 0 auto;
+    margin-top: 184px;
+    background-image: url('../assets/logo.png');
+    position: relative;
+    width: 380px;
+    height: 500px;
+    background: #1c1c1c;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.box::before {
+    content: '';
+    z-index: 1;
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 380px;
+    height: 420px;
+    transform-origin: bottom right;
+    background: linear-gradient(0deg, transparent, #45f3ff, #45f3ff);
+    animation: animate 6s linear infinite;
+}
+
+.box::after {
+    content: '';
+    z-index: 1;
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 380px;
+    height: 420px;
+    transform-origin: bottom right;
+    background: linear-gradient(0deg, transparent, #45f3ff, #45f3ff);
+    animation: animate 6s linear infinite;
+    animation-delay: -3s;
+}
+
+@keyframes animate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+form {
+    position: absolute;
+    inset: 2px;
+    background: #28292d;
+    padding: 50px 40px;
+    border-radius: 8px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+}
+
+h2 {
+    color: #45f3ff;
+    font-weight: 500;
+    text-align: center;
+    letter-spacing: 0.1em;
+}
+
+.inputBox {
+    position: relative;
+    width: 300px;
+    margin-top: 35px;
+}
+
+.inputBox input {
+    position: relative;
+    width: 100%;
+    padding: 20px 10px 10px;
+    background: transparent;
+    outline: none;
+    box-shadow: none;
+    border: none;
+    color: #23242a;
+    font-size: 1em;
+    letter-spacing: 0.05em;
+    transition: 0.5s;
+    z-index: 10;
+}
+
+.inputBox span {
+    position: absolute;
+    left: 0;
+    padding: 20px 0px 10px;
+    pointer-events: none;
+    font-size: 1em;
+    color: #8f8f8f;
+    letter-spacing: 0.05em;
+    transition: 0.5s;
+}
+
+.inputBox input:valid~span,
+.inputBox input:focus~span {
+    color: #45f3ff;
+    transform: translateX(0px) translateY(-34px);
+    font-size: 0.75em;
+}
+
+.inputBox i {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: #45f3ff;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: 0.5s;
+    pointer-events: none;
+    z-index: 9;
+}
+
+.inputBox input:valid~i,
+.inputBox input:focus~i {
+    height: 44px;
+}
+
+
+
+input[type="submit"] {
+    border: none;
+    outline: none;
+    padding: 11px 25px;
+    background: #45f3ff;
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: 600;
+    width: 100px;
+    margin-top: 10px;
+}
+
+input[type="submit"]:active {
+    opacity: 0.8;
 }
 </style>
