@@ -37,7 +37,9 @@
          <el-table-column label="操作">
             <template slot-scope="scope">
                <el-button type="primary" size="mini " icon="el-icon-edit" @click="editDate(scope.row)">修改</el-button>
-               <el-button size="mini" icon="el-icon-delete"  type="danger" @click="delDate(scope.row)">删除</el-button>
+               <el-button size="mini" icon="el-icon-delete" type="danger" @click="delDate(scope.row)">删除</el-button>
+
+
 
             </template>
          </el-table-column>
@@ -87,7 +89,7 @@
                </el-form-item>
             </el-form>
 
-            
+
 
             <div slot="footer" class="dialog-footer">
                <el-button @click="offdig">取 消</el-button>
@@ -105,7 +107,7 @@
 </template>
 
 <script>
-import { getUser, addUser, updUser, delUser } from '../../api'
+
 export default {
    name: 'User',
    data() {
@@ -116,9 +118,9 @@ export default {
             idcrad: '',
             ondata: '',
             backdata: '',
-            book:'',
-            phone:'',
-            subackdata:''
+            book: '',
+            phone: '',
+            subackdata: ''
 
          },
          rules: {
@@ -132,7 +134,7 @@ export default {
             phone: [
                { required: true, message: '请输入地址', trigger: 'blur' },
                { min: 11, max: 11, message: '请输入11位手机号码', trigger: 'change' }
-               
+
             ],
             sex: [
                { required: true, message: '请选择性别', trigger: 'change' },
@@ -188,7 +190,7 @@ export default {
          serData: {
             name: ''
          },
-         isback:0
+         isback: 0
       };
 
    },
@@ -201,8 +203,8 @@ export default {
    methods: {
       //获取列表
       getList() {
-         getUser({ params: { ...this.pageDate, ...this.serData } }).then(({ data }) => {
-            this.tableData = data.list
+         this.$API.book.getlist().then(({ data }) => {
+            this.tableData = data.message
             this.total = data.count || 0
 
             console.log(data);
@@ -215,9 +217,9 @@ export default {
             idcrad: '',
             ondata: '',
             backdata: '',
-            book:'',
-            phone:'',
-            subackdata:''
+            book: '',
+            phone: '',
+            subackdata: ''
          }
       },
       //对话框点击确定提交
@@ -235,7 +237,8 @@ export default {
                } else {
                   updUser(this.form).then(() => {
                      this.getList()
-                     console.log(11);
+                     this.isback = 1
+
                   })
                }
 

@@ -20,10 +20,8 @@
 </template>
 
 <script>
-import Mock from 'mockjs'
 import Cookie from 'js-cookie'
 import router from '@/router';
-import { getMenu } from '../api';
 
 
 export default {
@@ -47,12 +45,12 @@ export default {
     },
     methods: {
         submit() {
-
+            console.log(this.$API);
 
             //效验并登录
             this.$refs.form.validate((valid) => {
                 if (valid) {
-                    getMenu(this.form).then(({ data }) => {
+                    this.$API.user.login(this.form).then(({ data }) => {
                         if (data.code === 20000) {
                             Cookie.set('token', data.data.token)
                             // console.log(data);
@@ -68,8 +66,7 @@ export default {
                                 message: '登录成功',
                                 type: 'success'
                             });
-                        } else if(data.code) {
-                            
+                        } else if(data.status === 1) {
                             this.$message({
                                 message: '用户名或密码错误',
                                 type: 'error'

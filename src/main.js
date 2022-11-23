@@ -6,9 +6,10 @@ import ElementUI from 'element-ui';
 // import 'element-ui/lib/theme-chalk/index.css';
 import router from './router/index'
 import store from './store'
-import './api/mock.js'
 import Cookie from 'js-cookie'
 
+import * as API from '@/api'
+Vue.prototype.$API = API
 //全局前置导航守卫
 router.beforeEach((to,from,next)=>{
   //token

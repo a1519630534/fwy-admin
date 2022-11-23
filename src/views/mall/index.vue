@@ -97,7 +97,8 @@
 </template>
 
 <script>
-import { getAdminUser, addAdmin, updAdmin, delAdmin, getVipUser, addAVip, updVip, delVip, addVip } from '../../api'
+// import { getAdminUser, addAdmin, updAdmin, delAdmin, getVipUser, addAVip, updVip, delVip, addVip } from '../../api'
+
 export default {
    name: 'mall',
    data() {
@@ -156,15 +157,18 @@ export default {
          }
       },
       getList() {
-         getAdminUser({ params: { ...this.pageDate, ...this.serName } }).then(({ data }) => {
-            this.adminList = data.list
+      
+
+         this.$API.user.getUserInfo().then(({ data }) => {
+            // console.log(data.message);
+            this.adminList = data.message
             this.total = data.count || 0
 
          })
 
-         getVipUser({ params: { ...this.pageDate, ...this.serName } }).then(({ data }) => {
-            console.log(data);
-            this.vipList = data.list
+         this.$API.user.getVipUserInfo().then(({ data }) => {
+            // console.log(data);
+            this.vipList = data.message
             this.total = data.count || 0
 
          })
@@ -179,13 +183,13 @@ export default {
                if (this.modeType === 0) {
                   //添加请求
 
-                  addAdmin(this.form).then(() => {
+                  this.$API.user.regist(this.form).then(() => {
 
                      this.getList()
                   })
                   //否则就修改请求
                } else {
-                  updAdmin(this.form).then(() => {
+                  this.$API.user.updUserInfo(this.form).then(() => {
                      this.getList()
                   })
                }
@@ -215,7 +219,7 @@ export default {
             type: 'warning',
             center: true
          }).then(() => {
-            delAdmin({ id: row.id }).then((data) => {
+            this.$API.user.delUserInfo({ id: row.id }).then((data) => {
                this.getList()
                this.$message({
                   type: 'success',
@@ -232,33 +236,33 @@ export default {
          });
       },
       //VIP请求
-      submMit() {
-         this.$refs.form.validate((valid) => {
+      // submMit() {
+      //    this.$refs.form.validate((valid) => {
 
-            if (valid) {
-               if (this.modeType === 0) {
-                  //添加请求
+      //       if (valid) {
+      //          if (this.modeType === 0) {
+      //             //添加请求
 
-                  addVip(this.form).then(() => {
+      //             addVip(this.form).then(() => {
 
-                     this.getList()
-                  })
-                  //否则就修改请求
-               } else {
-                  updVip(this.form).then(() => {
-                     this.getList()
-                  })
-               }
-            }
+      //                this.getList()
+      //             })
+      //             //否则就修改请求
+      //          } else {
+      //             updVip(this.form).then(() => {
+      //                this.getList()
+      //             })
+      //          }
+      //       }
 
-         })
-         this.form = {
-            username: '',
-            password: '',
-            phone: ''
-         },
-            this.dialogFormVisible = false
-      },
+      //    })
+      //    this.form = {
+      //       username: '',
+      //       password: '',
+      //       phone: ''
+      //    },
+      //       this.dialogFormVisible = false
+      // },
       //VIP点击修改
       editVipUser(row) {
          this.dialogFormVisible = true
@@ -297,7 +301,6 @@ export default {
       }
    },
    mounted() {
-
       this.getList()
    },
 
