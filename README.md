@@ -1,5 +1,13 @@
 # 01
 
+run api
+
+```
+node ./app.js
+```
+
+
+
 ## Project setup
 ```
 npm install
