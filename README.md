@@ -1,6 +1,6 @@
 # 01
 
-run api
+## Run api    cd  api_server
 
 ```
 node ./app.js
