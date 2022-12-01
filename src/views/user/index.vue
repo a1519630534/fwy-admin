@@ -72,14 +72,14 @@
                   <el-input v-model="form.phone" placeholder="请输入11位手机号"></el-input>
                </el-form-item>
 
-               <el-form-item label="租借日期" >
+               <el-form-item label="租借日期">
                   <el-date-picker value-format="yyyy-MM-dd" type="date" placeholder="选择日期" v-model="form.ondata"
                      style="width: 100%;">
                   </el-date-picker>
                </el-form-item>
 
 
-               <el-form-item label="预定归还日期" >
+               <el-form-item label="预定归还日期">
                   <el-date-picker value-format="yyyy-MM-dd" type="date" placeholder="选择日期" v-model="form.backdata"
                      style="width: 100%;">
                   </el-date-picker>
@@ -124,7 +124,8 @@ export default {
             backdata: '',
             book: '',
             phone: '',
-            subackdata: ''
+            subackdata: '',
+            isB: 0
 
          },
          rules: {
@@ -232,9 +233,14 @@ export default {
       //对话框点击确定提交
       subdig() {
          //表单验证
+         if (this.form.subackdata) {
+            this.form.isB = 1
+         }
          this.$refs.form.validate((valid) => {
             if (valid) {
                if (this.modelType === 0) {
+
+
                   this.$API.book.add(this.form).then(() => {
                      //发送请求成功重新获取列表
                      this.getList()
@@ -261,6 +267,7 @@ export default {
       addUs() {
          this.dialogFormVisible = true
          this.modelType = 0
+
 
       },
       //点击取消按钮
@@ -306,15 +313,16 @@ export default {
       },
       onSubmit() {
          console.log(this.serData.name);
-         if(this.serData.name){
-            this.$API.book.serlist({params:{...this.serData}}).then(({data})=>{
-            this.tableData = data.message
-            return
-         })
-         
+         if (this.serData.name) {
+            this.$API.book.serlist({ params: { ...this.serData } }).then(({ data }) => {
+               this.tableData = data.message
+               return
+            })
+
          } else this.getList()
       }
    },
+
 
 }
 </script>

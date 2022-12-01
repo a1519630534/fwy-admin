@@ -72,30 +72,7 @@ exports.login = (req, res) => {
         const tokenStr = jwt.sign(user, config.jwtSerKey, { expiresIn: config.expiresIn })
 
 
-        res.send({
-            code: 20000,
-
-            data: {
-                menu: [
-                  {
-                    path: '/home',
-                    name: 'home',
-                    label: '首页',
-                    icon: 's-home',
-                    url: 'Home.vue'
-                  },
-                  {
-                    path: '/user',
-                    name: 'user',
-                    label: '书籍管理',
-                    icon: 'video-play',
-                    url: 'Mall.vue'
-                  }
-                ],
-                token: 'Bearer' + ' ' + tokenStr,
-                message: '登录成功'
-              }
-        })
+        
 
 
     })

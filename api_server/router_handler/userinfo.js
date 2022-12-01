@@ -11,7 +11,7 @@ const one = function(str,mes){
 
 exports.getUserInfo = (req, res) => {
 
-    const sqlSearchuser = 'select id,username,password,phone from admin'
+    const sqlSearchuser = 'select id,username,password,phone from admin where isA=1'
     db.query(sqlSearchuser, (err, resluts) => {
         if(err) return res.send(one(1,err.message))
 

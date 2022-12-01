@@ -33,7 +33,7 @@ exports.regUser = (req, res) => {
         userInfo.password = bcryptjs.hashSync(userInfo.password, 10)
         //插入新用户
         const sqladd = `INSERT INTO admin set ?`
-        db.query(sqladd, { username: userInfo.username, password: userInfo.password,phone:userInfo.phone }, (err, result) => {
+        db.query(sqladd, userInfo, (err, result) => {
             if (err) {
                 return res.send({ status: 1, message: err.message })
             }
@@ -70,41 +70,68 @@ exports.login = (req, res) => {
         //生成token
         const user = { ...result[0], password: '', phone: '' }
         const tokenStr = jwt.sign(user, config.jwtSerKey, { expiresIn: config.expiresIn })
+        console.log(result[0].isA);
 
-
-        res.send({
-            code: 20000,
-
-            data: {
-                menu: [
-                    {
+        if(result[0].isA){
+            res.send({
+                code: 20000,
+    
+                data: {
+                    menu: [
+                        {
+                            path: '/home',
+                            name: 'home',
+                            label: '首页',
+                            icon: 's-home',
+                            url: 'Home.vue',
+                            rolo: 'mm'
+                        },
+                        {
+                            path: '/mall',
+                            name: 'mall',
+                            label: '用户管理',
+                            icon: 'video-play',
+                            url: 'Mall.vue'
+                        },
+                        {
+                            path: '/user',
+                            name: 'user',
+                            label: '书籍管理',
+                            icon: 'user',
+                            url: 'User.vue'
+                        },
+    
+                    ],
+                    token: 'Bearer' + ' ' + tokenStr,
+                    message: '登录成功'
+                }
+            })
+        }else if(!result[0].isA) {
+            res.send({
+                code: 20000,
+    
+                data: {
+                    menu: [
+                      {
                         path: '/home',
                         name: 'home',
                         label: '首页',
                         icon: 's-home',
-                        url: 'Home.vue',
-                        rolo: 'mm'
-                    },
-                    {
-                        path: '/mall',
-                        name: 'mall',
-                        label: '用户管理',
-                        icon: 'video-play',
-                        url: 'Mall.vue'
-                    },
-                    {
+                        url: 'Home.vue'
+                      },
+                      {
                         path: '/user',
                         name: 'user',
                         label: '书籍管理',
-                        icon: 'user',
-                        url: 'User.vue'
-                    },
-
-                ],
-                token: 'Bearer' + ' ' + tokenStr,
-                message: '登录成功'
-            }
-        })
+                        icon: 'video-play',
+                        url: 'Mall.vue'
+                      }
+                    ],
+                    token: 'Bearer' + ' ' + tokenStr,
+                    message: '登录成功'
+                  }
+            })
+        }
 
 
     })

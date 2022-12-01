@@ -2,7 +2,7 @@
 <div>
     <div class="box">
         <form autocomplete="off">
-            <h2>{{isAdmin?'管理员登录':'用户登录'}}</h2>
+            <h2>用户登录</h2>
             <div class="inputBox">
                 <input type="text" v-model="form.username" required="required">
                 <span>用户名</span>
@@ -14,7 +14,6 @@
                 <i></i>
             </div>
             <input type="submit" value="登录" @click="submit">
-            <input type="submit" :value="isAdmin?'切换普通':'切换管理员'" @click="swUser" >
             
         </form>
     </div>
@@ -35,23 +34,13 @@ export default {
                 password: 'admin'
 
             },
-            isAdmin:false
-            // rules: {
-            //     username: [
-            //         { required: true, message: '请输入用户名', trigger: 'blur' },
-            //     ],
-            //     password: [
-            //         { required: true, message: '请输入密码', trigger: 'blur' },
-            //     ]
-            // }
+
         };
     },
     methods: {
-        swUser(){
-            this.isAdmin = !this.isAdmin
-        },
+
         submit() {
-            if(this.isAdmin){
+            
                 this.$API.user.login(this.form).then(({ data }) => {
                 if (data.code === 20000) {
                     Cookie.set('token', data.data.token)
@@ -78,35 +67,7 @@ export default {
 
                 }
             })
-            }else {
-                console.log(11);
-                this.$API.user.viplogin(this.form).then(({ data }) => {
-                if (data.code === 20000) {
-                    Cookie.set('token', data.data.token)
-                    // console.log(data);
-
-                    //登录成功设置路由
-                    this.$store.commit('setMenu', data.data.menu)
-                    //动态添加路由
-                    this.$store.commit('addMenu', this.$router)
-
-                    this.$router.push('/home')
-                    // console.log(data);
-                    this.$message({
-                        message: '登录成功',
-                        type: 'success'
-                    });
-                } else if (data.status === 1) {
-                    this.$message({
-                        message: '用户名或密码错误',
-                        type: 'error'
-                    });
-                }
-                else {
-
-                }
-            })
-            }
+            
 
         },
     },
