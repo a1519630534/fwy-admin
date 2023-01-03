@@ -47,13 +47,13 @@ exports.deleteUserInfo = (req,res)=>{
 
 exports.updateUserInfo = (req,res)=>{
 
-    const sqlUpd = 'update admin set ? where username=?'
+    const sqlUpd = 'update admin set ? where id=?'
     const userinfo = req.body
 
 
     //将传入的密码进行加密
     userinfo.password = bcryptjs.hashSync(userinfo.password,10)
-    db.query(sqlUpd,[userinfo,req.body.username],(err,results)=>{
+    db.query(sqlUpd,[userinfo,req.body.id],(err,results)=>{
         if(err) return res.send(one(1,err.message)) 
 
         if(userinfo.username === 'admin') return res.send(one(1,'最高管理员用户不可修改'))

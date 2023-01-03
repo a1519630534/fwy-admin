@@ -1,23 +1,23 @@
 <template>
-<div>
-    <div class="box">
-        <form autocomplete="off">
-            <h2>用户登录</h2>
-            <div class="inputBox">
-                <input type="text" v-model="form.username" required="required">
-                <span>用户名</span>
-                <i></i>
-            </div>
-            <div class="inputBox">
-                <input type="password" v-model="form.password" required="required">
-                <span>密码</span>
-                <i></i>
-            </div>
-            <input type="submit" value="登录" @click="submit">
-            
-        </form>
+    <div>
+        <div class="box">
+            <form autocomplete="off">
+                <h2>用户登录</h2>
+                <div class="inputBox">
+                    <input type="text" v-model="form.username" required="required">
+                    <span>用户名</span>
+                    <i></i>
+                </div>
+                <div class="inputBox">
+                    <input type="password" v-model="form.password" required="required">
+                    <span>密码</span>
+                    <i></i>
+                </div>
+                <input type="submit" value="登录" @click.prevent="submit">
+
+            </form>
+        </div>
     </div>
-</div>
 </template>
 
 <script>
@@ -40,10 +40,12 @@ export default {
     methods: {
 
         submit() {
-            
-                this.$API.user.login(this.form).then(({ data }) => {
+
+
+            this.$API.user.login(this.form).then(({ data }) => {
                 if (data.code === 20000) {
                     Cookie.set('token', data.data.token)
+                    Cookie.set('username', data.data.username)
                     // console.log(data);
 
                     //登录成功设置路由
@@ -51,23 +53,33 @@ export default {
                     //动态添加路由
                     this.$store.commit('addMenu', this.$router)
 
+                    //存储用户名
+                    this.$store.dispatch('getInfo', data.data)
+
+
+
+                    // console.log(this.$store.state.userinfo.userinfo);
                     this.$router.push('/home')
                     // console.log(data);
+
                     this.$message({
                         message: '登录成功',
-                        type: 'success'
+                        type: 'success',
+
+
                     });
                 } else if (data.status === 1) {
                     this.$message({
                         message: '用户名或密码错误',
                         type: 'error'
+
                     });
                 }
                 else {
 
                 }
             })
-            
+
 
         },
     },
@@ -76,7 +88,11 @@ export default {
     },
     beforeDestroy() {
         document.querySelector('body').removeAttribute('style')
-    }
+    },
+    mounted() {
+
+    },
+
 }
 </script>
 

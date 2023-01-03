@@ -39,7 +39,7 @@ export default {
 
         },
         setMenu(state, val) {
-            state.menu = val
+            // state.menu = val
 
             //设置缓存
 
@@ -48,31 +48,8 @@ export default {
         },
         addMenu(state, router) {
             if (!Cookie.get('menu')) return
-            const menu = JSON.parse(Cookie.get('menu'))
-            // console.log(menu);
-            // state.menu = menu
-            // const menuArr = []
-            // //组装动态路由,给每一个路由添加component属性
-            // menu.forEach(item => {
-            //     console.log(item,'item');
-            //     if (item.children) {
-            //         item.children = item.children.map(item => {
-            //             item.component = () => import(`../views/${item.name}/index`)
-            //             return item
-            //         })
-            //         menuArr.push(...item.children)
-            //     }else
-            //     item.component = () => import(`../views/${item.name}/index`)
-                
-            //     menuArr.push(item)
-            // });
-            // console.log(menuArr,'menuArr');
-            
-            // //动态添加路由
-            // menuArr.forEach(item => {
-            //     router.addRoute('Main',item) 
-            //     // router.addRoute({ path: item.path, component: item.name })
-            // })
+            state.menu = JSON.parse(Cookie.get('menu'))
+
         }
     }
 }

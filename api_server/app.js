@@ -32,6 +32,9 @@ app.use('/api',userinfoRouter)
 const vipuserinfoRouter = require('./router/vipuserinfo')
 app.use('/api',vipuserinfoRouter)
 
+const bookRouter = require('./router/book')
+app.use('/api',bookRouter)
+
 
 
 

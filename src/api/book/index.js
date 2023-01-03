@@ -17,4 +17,7 @@ export default {
     upd(data){
         return axios.post('/updlist',data)
     },
+    upd(data){
+        return axios.post('/updlist',data)
+    },
 }

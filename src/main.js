@@ -19,7 +19,7 @@ router.beforeEach((to,from,next)=>{
     next({ name:'login'})
    } 
    //如果token存在并且在登录页面，跳转到首页
-   else if(token && to.name === 'login'){
+   else if(token && to.name === 'login' || to.path === '/'){
     next({name:'home'})
    }else{
     next()

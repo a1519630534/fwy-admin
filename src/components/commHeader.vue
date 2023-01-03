@@ -46,6 +46,7 @@ export default {
             if(command === 'out'){
                 Cookie.remove('token')
                 Cookie.remove('menu')
+                Cookie.remove('username')
                 this.$router.push('login')
 
             }

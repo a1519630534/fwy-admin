@@ -12,7 +12,7 @@
 
 
          <el-form-item label="" size="normal" style="float: right;">
-            <el-button type="primary" size="medium" @click="swUser">切换至VIP用户</el-button>
+            <el-button type="primary" size="medium" @click="swUser">{{this.isAdminLisr? '切换至VIP用户':'切换至管理员用户'}}</el-button>
          </el-form-item>
 
 
@@ -110,12 +110,15 @@ export default {
          form: {
             username: '',
             password: '',
-            phone: ''
+            phone: '',
+            isA:1
          },
          vipform: {
             username: '',
             password: '',
-            phone: ''
+            phone: '',
+            isA:0
+
          },
          dialogFormVisible: false,
          dialogFormVisibleVip: false,
@@ -144,7 +147,8 @@ export default {
          this.form = {
             username: '',
             password: '',
-            phone: ''
+            phone: '',
+            isA:1
          }
       },
       addVipUser() {
@@ -153,7 +157,8 @@ export default {
          this.vipform = {
             username: '',
             password: '',
-            phone: ''
+            phone: '',
+            isA:0
          }
       },
       getList() {
@@ -245,14 +250,14 @@ export default {
                if (this.modeType === 0) {
                   //添加请求
 
-                  this.$API.user.vipregist(this.vipform).then(() => {
+                  this.$API.user.regist(this.vipform).then(() => {
 
                      this.getList()
                      this.dialogFormVisibleVip = false
                   })
                   //否则就修改请求
                } else {
-                  this.$API.user.vipupdUserInfo(this.vipform).then(() => {
+                  this.$API.user.updUserInfo(this.vipform).then(() => {
                      this.dialogFormVisibleVip = false
                      this.getList()
                   })

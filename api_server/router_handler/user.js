@@ -70,9 +70,10 @@ exports.login = (req, res) => {
         //生成token
         const user = { ...result[0], password: '', phone: '' }
         const tokenStr = jwt.sign(user, config.jwtSerKey, { expiresIn: config.expiresIn })
-        console.log(result[0].isA);
-
+        // console.log(result[0].isA);
+        // console.log(result);
         if(result[0].isA){
+            
             res.send({
                 code: 20000,
     
@@ -94,19 +95,30 @@ exports.login = (req, res) => {
                             url: 'Mall.vue'
                         },
                         {
+                            path: '/book',
+                            name: 'book',
+                            label: '书籍管理',
+                            icon: 'user',
+                            url: 'book.vue'
+                        },
+                        {
                             path: '/user',
                             name: 'user',
-                            label: '书籍管理',
+                            label: '借阅管理',
                             icon: 'user',
                             url: 'User.vue'
                         },
+                        
     
                     ],
                     token: 'Bearer' + ' ' + tokenStr,
-                    message: '登录成功'
+                    message: '登录成功',
+                    username: result[0].username,
+                    isA:result[0].isA
                 }
             })
         }else if(!result[0].isA) {
+            console.log(result[0].isA);
             res.send({
                 code: 20000,
     
@@ -122,13 +134,17 @@ exports.login = (req, res) => {
                       {
                         path: '/user',
                         name: 'user',
-                        label: '书籍管理',
+                        label: '借阅管理',
                         icon: 'video-play',
                         url: 'Mall.vue'
                       }
                     ],
                     token: 'Bearer' + ' ' + tokenStr,
-                    message: '登录成功'
+                    message: '登录成功',
+
+                    username: result[0].username,
+                    isA:result[0].isA
+
                   }
             })
         }

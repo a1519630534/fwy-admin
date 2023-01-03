@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import store from '@/store'
 
 
 
@@ -20,9 +21,28 @@ const routes = [
 
             },
             {
+             path: '/book', name: 'book', component: () => import('../views/book/index'),
+            },
+            {
                 path: '/user', name: 'user', component: () => import('../views/user/index') //用户管理
             },
-            { path: '/mall', name: 'mall', component: () => import('../views/mall/index') }, //商品管理
+            { path: '/mall', name: 'mall', component: () => import('../views/mall/index'),
+
+
+            
+            beforeEnter: (to, from, next) => {
+                let userA = store.state.userinfo.userinfo.isA
+                // console.log(store.state.userinfo.userinfo.isA);
+                if(!userA){
+                    alert('非法请求！')
+                    next('/')
+                }else{
+                    next()
+                }
+            }
+        }, //借阅管理
+        
+        
         ],
        
     },
@@ -38,6 +58,8 @@ const routes = [
 
 
 const router = new VueRouter({
+    // mode:'history',//不带#
+    mode:'history',
     routes
 })
 

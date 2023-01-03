@@ -17,10 +17,11 @@ exports.getUserInfo = (req, res) => {
         // console.log(pageList);
         if (err) return res.send(one(1, err.message))
 
+        const length = resluts.length
         if (resluts.length != 0) {
             let count = resluts.length
             // return res.send(one(0,{pageList,pag}))
-            return res.send({ status: 0, pageList, pag, count })
+            return res.send({ status: 0, pageList, pag, count, length })
         }
 
         return res.send(one(1, '意外的失败'))
@@ -31,28 +32,67 @@ exports.getUserInfo = (req, res) => {
 }
 
 exports.addUserInfo = (req, res) => {
-    const { name, idcrad, ondata, backdata, book, phone, subackdata } = req.body
+    const userinfo = req.body
+    const bookName = req.body.book
+    // console.log(userinfo);
+    
+    // console.log(req.body);
     //查询是否为空
-    if (!name || !phone) {
+    if (!userinfo.name || !userinfo.phone) {
         return res.send({
             status: 1,
             nessage: '不能为空'
         })
     }
 
-    //添加
-    const sqladd = `INSERT INTO info set ?`
-    db.query(sqladd, {
-        name: name, idcrad: idcrad, ondata: ondata, backdata: backdata,
-        book: book, phone, subackdata: subackdata
-    }, (err, result) => {
-        if (err) {
-            return res.send({ status: 1, message: err.message })
+    const numsql = `select num from book where name=?`
+    db.query(numsql, bookName, (err, result) => {
+        let bookNum = result[0].num
+        console.log(bookNum);
+        bookNum--
+        console.log(bookNum);
+        if(err) return res.send({status:1,message:err.message})
+
+
+        if (bookNum < 1) {
+            
+            const sqlUpd = 'update book set isT=1 where name=?'
+            db.query(sqlUpd,  req.body.name, (err, results) => {
+                if (err) return res.send(one(1, err.message))
+                if (results.affectedRows !== 1) return res.send(one(1, '修改失败'))
+
+
+                res.send(one(0, `归还成功`))
+            })
+
+            return res.send({ status: 1, message: '对不起，此书已被借完' })
         }
-        if (result.affectedRows !== 1) return res.send({ status: 1, message: '添加失败' })
-        res.send({ status: 0, message: '添加成功' })
+
+        const sqladd = `INSERT INTO info set ?`
+        db.query(sqladd, userinfo, (err, result) => {
+            // console.log(result);
+            if (err) {
+                return res.send({ status: 1, message: err.message })
+            }
+            if (result.affectedRows !== 1) return res.send({ status: 1, message: '添加失败' })
+
+            const sqlUpd = 'update book set num=? where name=?'
+
+            db.query(sqlUpd, [bookNum, req.body.book], (err, results) => {
+                if (err) return res.send(one(1, err.message))
+                if (results.affectedRows !== 1) return res.send(one(1, '修改失败'))
+
+
+                res.send({ status: 0, message: '添加成功' })
+            })
+
+            
+    
+        })
 
     })
+    //添加
+
 
 
 
@@ -111,13 +151,13 @@ exports.updUserInfo = (req, res) => {
 exports.serUserInfo = (req, res) => {
     let serName = req.query.name
     const sqlInfo = 'select * from info where name=? '
-    db.query(sqlInfo,serName, (err, resluts) => {
+    db.query(sqlInfo, serName, (err, resluts) => {
 
         if (err) return res.send(one(1, err.message))
 
         if (resluts.length != 0) {
             let count = resluts.length
-            return res.send(one(20000,resluts))
+            return res.send(one(20000, resluts))
         }
 
         return res.send(one(1, '意外的失败'))
